@@ -138,6 +138,9 @@ const TodoPage = () => {
     });
   };
 
+  // 計算剩餘 todo 數量
+  const todosRemained = todos.length;
+
   return (
     <div>
       TodoPage
@@ -155,7 +158,7 @@ const TodoPage = () => {
         onChangeMode={handleChangeMode}
         onDelete={handleDelete}
       />
-      <Footer />
+      <Footer todosRemained={todosRemained} />
     </div>
   );
 };
