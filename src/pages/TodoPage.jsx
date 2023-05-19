@@ -32,17 +32,41 @@ const TodoPage = () => {
   const [todos, setTodos] = useState(dummyTodos);
 
   // 儲存使用者輸入資訊
-  const handleInput = (value) => {
+  const handleChange = (value) => {
     setInputValue(value);
   };
 
-  const handleTodo = () => {
+  // 新增一筆 todo
+  const handleAddTodo = () => {
     // 如果輸入空值就不要執行
     if (inputValue.length === 0) {
       return;
     }
 
-    // 新增一筆 todo
+    setTodos((prevTodos) => {
+      return [
+        ...prevTodos,
+        {
+          // 給 id 一個數字
+          id: Math.random() * 100,
+          title: inputValue,
+          // 新增的 todo 照理來說還沒完成
+          isDone: false,
+        },
+      ];
+    });
+
+    // 新增 todo 後清空輸入欄
+    setInputValue('');
+  };
+
+  // 新增一筆 todo（如果按 Enter 鍵的話，程式碼跟上面的一樣）
+  const handleKeyDown = () => {
+    // 如果輸入空值就不要執行
+    if (inputValue.length === 0) {
+      return;
+    }
+
     setTodos((prevTodos) => {
       return [
         ...prevTodos,
@@ -66,8 +90,9 @@ const TodoPage = () => {
       <Header />
       <TodoInput
         inputValue={inputValue}
-        onChange={handleInput}
-        onAddTodo={handleTodo}
+        onChange={handleChange}
+        onAddTodo={handleAddTodo}
+        onKeyDown={handleKeyDown}
       />
       <TodoCollection todos={todos} />
       <Footer />
