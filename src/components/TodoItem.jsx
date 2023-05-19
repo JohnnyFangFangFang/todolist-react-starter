@@ -6,6 +6,8 @@ import {
 } from 'assets/images';
 // 引入根據狀態而改變套用樣式的套件
 import clsx from 'clsx';
+// 引入 useRef Hook
+import { useRef } from 'react';
 
 const StyledTaskItem = styled.div`
   min-height: 52px;
@@ -103,8 +105,24 @@ const StyledTaskItem = styled.div`
 `;
 
 const TodoItem = ({ todo, onSave, onDelete, onToggleDone, onChangeMode }) => {
+  // 把正在輸入的值用 inputRef 存取
+  const inputRef = useRef(null);
+  // 如果有按鍵行為該觸發什麼
+  const handleKeyDown = (event) => {
+    // 如果輸入值有東西且按 Enter 鍵，則觸發 onSave
+    if (inputRef.current.value.length > 0 && event.key === 'Enter') {
+      onSave?.({ id: todo.id, title: inputRef.current.value });
+    }
+    // 如果按 Escape 鍵，則觸發 onChangeMode
+    if (event.key === 'Escape') {
+      onChangeMode?.({ id: todo.id, isEdit: false });
+    }
+  };
+
   return (
-    <StyledTaskItem className={clsx('', { done: todo.isDone })}>
+    <StyledTaskItem
+      className={clsx('', { done: todo.isDone, edit: todo.isEdit })}
+    >
       <div className="task-item-checked">
         <span
           className="icon icon-checked"
@@ -113,9 +131,18 @@ const TodoItem = ({ todo, onSave, onDelete, onToggleDone, onChangeMode }) => {
           }}
         />
       </div>
-      <div className="task-item-body">
+      <div
+        className="task-item-body"
+        // 滑鼠雙擊則觸發 onChangeMode
+        onDoubleClick={() => onChangeMode?.({ id: todo.id, isEdit: true })}
+      >
         <span className="task-item-body-text">{todo.title}</span>
-        <input className="task-item-body-input" />
+        <input
+          className="task-item-body-input"
+          ref={inputRef}
+          onKeyDown={handleKeyDown}
+          defaultValue={todo.title}
+        />
       </div>
       <div className="task-item-action ">
         <button className="btn-reset btn-destroy icon"></button>
