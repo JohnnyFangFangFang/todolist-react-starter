@@ -1,6 +1,6 @@
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
 import { useState, useEffect } from 'react';
-import { getTodos, createTodo } from '../api/todos';
+import { getTodos, createTodo, patchTodo } from '../api/todos';
 
 const TodoPage = () => {
   // 把使用者輸入資訊存在這
@@ -79,18 +79,27 @@ const TodoPage = () => {
   };
 
   // 切換 todo 完成樣式
-  const handleToggleDone = (id) => {
-    setTodos((prevTodos) => {
-      return prevTodos.map((todo) => {
-        if (todo.id === id) {
-          return {
-            ...todo,
-            isDone: !todo.isDone,
-          };
-        }
-        return todo;
+  const handleToggleDone = async (id) => {
+    const currentTodo = todos.find((todo) => todo.id === id);
+    try {
+      await patchTodo({
+        id,
+        isDone: !currentTodo.isDone,
       });
-    });
+      setTodos((prevTodos) => {
+        return prevTodos.map((todo) => {
+          if (todo.id === id) {
+            return {
+              ...todo,
+              isDone: !todo.isDone,
+            };
+          }
+          return todo;
+        });
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // 更換成編輯模式
@@ -109,20 +118,27 @@ const TodoPage = () => {
   };
 
   // 編輯完成後儲存
-  const handleSave = ({ id, title }) => {
-    setTodos((prevTodos) => {
-      return prevTodos.map((todo) => {
-        if (todo.id === id) {
-          return {
-            ...todo,
-            id,
-            title,
-            isEdit: false,
-          };
-        }
-        return todo;
+  const handleSave = async ({ id, title }) => {
+    try {
+      await patchTodo({
+        id,
+        title,
       });
-    });
+      setTodos((prevTodos) => {
+        return prevTodos.map((todo) => {
+          if (todo.id === id) {
+            return {
+              ...todo,
+              title,
+              isEdit: false,
+            };
+          }
+          return todo;
+        });
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // 刪除功能
