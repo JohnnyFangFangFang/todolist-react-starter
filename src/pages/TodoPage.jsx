@@ -1,35 +1,13 @@
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
-import { useState } from 'react';
-
-const dummyTodos = [
-  {
-    title: 'Learn react-router',
-    isDone: true,
-    id: 1,
-  },
-  {
-    title: 'Learn to create custom hooks',
-    isDone: false,
-    id: 2,
-  },
-  {
-    title: 'Learn to use context',
-    isDone: true,
-    id: 3,
-  },
-  {
-    title: 'Learn to implement auth',
-    isDone: false,
-    id: 4,
-  },
-];
+import { useState, useEffect } from 'react';
+import { getTodos, createTodo } from '../api/todos';
 
 const TodoPage = () => {
   // 把使用者輸入資訊存在這
   const [inputValue, setInputValue] = useState('');
 
   // todos 存在這
-  const [todos, setTodos] = useState(dummyTodos);
+  const [todos, setTodos] = useState([]);
 
   // 儲存使用者輸入資訊
   const handleChange = (value) => {
@@ -37,51 +15,67 @@ const TodoPage = () => {
   };
 
   // 新增一筆 todo
-  const handleAddTodo = () => {
+  const handleAddTodo = async () => {
     // 如果輸入空值就不要執行
     if (inputValue.length === 0) {
       return;
     }
+    try {
+      const data = await createTodo({
+        title: inputValue,
+        isDone: false,
+      });
+      setTodos((prevTodos) => {
+        return [
+          ...prevTodos,
+          {
+            // 使用從 API 撈到的資料
+            id: data.id,
+            title: data.title,
+            isDone: data.isDone,
+            // 預設不是編輯狀態
+            isEdit: false,
+          },
+        ];
+      });
 
-    setTodos((prevTodos) => {
-      return [
-        ...prevTodos,
-        {
-          // 給 id 一個數字
-          id: Math.random() * 100,
-          title: inputValue,
-          // 新增的 todo 照理來說還沒完成
-          isDone: false,
-        },
-      ];
-    });
-
-    // 新增 todo 後清空輸入欄
-    setInputValue('');
+      // 新增 todo 後清空輸入欄
+      setInputValue('');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // 新增一筆 todo（如果按 Enter 鍵的話，程式碼跟上面的一樣）
-  const handleKeyDown = () => {
+  const handleKeyDown = async () => {
     // 如果輸入空值就不要執行
     if (inputValue.length === 0) {
       return;
     }
+    try {
+      const data = await createTodo({
+        title: inputValue,
+        isDone: false,
+      });
+      setTodos((prevTodos) => {
+        return [
+          ...prevTodos,
+          {
+            // 使用從 API 撈到的資料
+            id: data.id,
+            title: data.title,
+            isDone: data.isDone,
+            // 預設不是編輯狀態
+            isEdit: false,
+          },
+        ];
+      });
 
-    setTodos((prevTodos) => {
-      return [
-        ...prevTodos,
-        {
-          // 給 id 一個數字
-          id: Math.random() * 100,
-          title: inputValue,
-          // 新增的 todo 照理來說還沒完成
-          isDone: false,
-        },
-      ];
-    });
-
-    // 新增 todo 後清空輸入欄
-    setInputValue('');
+      // 新增 todo 後清空輸入欄
+      setInputValue('');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // 切換 todo 完成樣式
@@ -140,6 +134,19 @@ const TodoPage = () => {
 
   // 計算剩餘 todo 數量
   const todosRemained = todos.length;
+
+  // 透過 API 撈初始資料
+  useEffect(() => {
+    const getTodosAsync = async () => {
+      try {
+        const todos = await getTodos();
+        setTodos(todos.map((todo) => ({ ...todo, isEdit: false })));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getTodosAsync();
+  }, []);
 
   return (
     <div>
