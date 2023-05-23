@@ -47,7 +47,7 @@ const SignUpPage = () => {
         showConfirmButton: false,
       });
       // 若成功則導至 todos 頁面
-      navigate('/todos');
+      navigate('/todo');
       return;
     }
     // 彈出登入失敗訊息
