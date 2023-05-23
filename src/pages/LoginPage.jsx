@@ -6,9 +6,9 @@ import {
 } from 'components/common/auth.styled';
 import { ACLogoIcon } from 'assets/images';
 import { AuthInput } from 'components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../api/auth';
+import { login, checkPermission } from '../api/auth';
 // 引入彈跳視窗的套件
 import Swal from 'sweetalert2';
 
@@ -16,6 +16,26 @@ const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+
+  // 檢查 token
+  useEffect(() => {
+    const checkTokenIsValid = async () => {
+      // 從 localStorage 拿 token
+      const authToken = localStorage.getItem('authToken');
+      // 如果沒 token 就直接 return，停留在原頁面
+      if (!authToken) {
+        return;
+      }
+      // 若有 token 則透過 api 與後端比對
+      const result = await checkPermission(authToken);
+      // 若比對正確則導向 todos 頁面
+      if (result) {
+        navigate('/todos');
+      }
+    };
+
+    checkTokenIsValid();
+  }, [navigate]);
 
   // 點擊登入按鈕功能
   const handleClick = async () => {

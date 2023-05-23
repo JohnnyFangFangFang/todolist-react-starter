@@ -1,6 +1,8 @@
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
 import { useState, useEffect } from 'react';
 import { getTodos, createTodo, patchTodo, deleteTodo } from '../api/todos';
+import { useNavigate } from 'react-router-dom';
+import { checkPermission } from '../api/auth';
 
 const TodoPage = () => {
   // 把使用者輸入資訊存在這
@@ -8,6 +10,28 @@ const TodoPage = () => {
 
   // todos 存在這
   const [todos, setTodos] = useState([]);
+
+  const navigate = useNavigate();
+
+  // 檢查 token
+  useEffect(() => {
+    const checkTokenIsValid = async () => {
+      // 從 localStorage 拿 token
+      const authToken = localStorage.getItem('authToken');
+      // 如果沒 token 就導回登入頁面
+      if (!authToken) {
+        navigate('/login')
+      }
+      // 若有 token 則透過 api 與後端比對
+      const result = await checkPermission(authToken);
+      // 若比對失敗則導回登入頁面
+      if (!result) {
+        navigate('/login');
+      }
+    };
+
+    checkTokenIsValid();
+  }, [navigate]);
 
   // 儲存使用者輸入資訊
   const handleChange = (value) => {
