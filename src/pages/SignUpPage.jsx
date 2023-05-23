@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 // 引入彈跳視窗的套件
 import Swal from 'sweetalert2';
-import { register } from '../ap;i/auth';
+import { register } from '../api/auth';
 
 const SignUpPage = () => {
   const [username, setUsername] = useState('');
