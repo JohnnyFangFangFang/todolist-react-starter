@@ -8,10 +8,28 @@ import { ACLogoIcon } from 'assets/images';
 import { AuthInput } from 'components';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { login } from '../api/auth';
 
 const LoginPage = () => {
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  // 點擊登入按鈕功能
+  const handleClick = async () => {
+    if (username.length === 0) {
+      return;
+    }
+    if (password.length === 0) {
+      return;
+    }
+    const { success, authToken } = await login({
+      username,
+      password,
+    });
+    if (success) {
+      localStorage.setItem('authToken', authToken);
+    }
+  };
   return (
     <AuthContainer>
       <div>
@@ -22,9 +40,9 @@ const LoginPage = () => {
       <AuthInputContainer>
         <AuthInput
           label="帳號"
-          value={userName}
+          value={username}
           placeholder="請輸入帳號"
-          onChange={(nameInputValue) => setUserName(nameInputValue)}
+          onChange={(nameInputValue) => setUsername(nameInputValue)}
         />
       </AuthInputContainer>
 
@@ -37,7 +55,7 @@ const LoginPage = () => {
           onChange={(passwordInputValue) => setPassword(passwordInputValue)}
         />
       </AuthInputContainer>
-      <AuthButton>登入</AuthButton>
+      <AuthButton onClick={handleClick}>登入</AuthButton>
       <Link to="/signup">
         <AuthLinkText>註冊</AuthLinkText>
       </Link>
