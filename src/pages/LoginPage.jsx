@@ -7,7 +7,7 @@ import {
 import { ACLogoIcon } from 'assets/images';
 import { AuthInput } from 'components';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../api/auth';
 // 引入彈跳視窗的套件
 import Swal from 'sweetalert2';
@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   // 點擊登入按鈕功能
   const handleClick = async () => {
@@ -38,6 +39,8 @@ const LoginPage = () => {
         icon: 'success',
         showConfirmButton: false,
       });
+      // 若成功則導至 todos 頁面
+      navigate('/todos');
       return;
     }
     // 彈出登入失敗訊息
