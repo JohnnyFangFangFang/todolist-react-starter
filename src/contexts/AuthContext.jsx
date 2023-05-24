@@ -1,5 +1,5 @@
 import { login, register, checkPermission } from '../api/auth';
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import * as jwt from 'jsonwebtoken';
 import { useLocation } from 'react-router-dom';
 
@@ -12,7 +12,9 @@ const defaultAuthContext = {
   logout: null, // 登出方法
 };
 
+// 建立 context 後還要匯出才能讓別人用到
 const AuthContext = createContext(defaultAuthContext);
+export const useAuth=()=>useContext(AuthContext)
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
