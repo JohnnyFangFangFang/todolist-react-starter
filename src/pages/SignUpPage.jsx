@@ -10,33 +10,23 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 // 引入彈跳視窗的套件
 import Swal from 'sweetalert2';
-import { register, checkPermission } from '../api/auth';
+// import { register, checkPermission } from '../api/auth';不需要了
+// 引用封裝好的資訊
+import { useAuth } from '../contexts/AuthContext';
 
 const SignUpPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { register, isAuthenticated } = useAuth();
 
   // 檢查 token
   useEffect(() => {
-    const checkTokenIsValid = async () => {
-      // 從 localStorage 拿 token
-      const authToken = localStorage.getItem('authToken');
-      // 如果沒 token 就直接 return，停留在原頁面
-      if (!authToken) {
-        return;
-      }
-      // 若有 token 則透過 api 與後端比對
-      const result = await checkPermission(authToken);
-      // 若比對正確則導向 todos 頁面
-      if (result) {
-        navigate('/todos');
-      }
-    };
-
-    checkTokenIsValid();
-  }, [navigate]);
+    if (isAuthenticated) {
+      navigate('/todos');
+    }
+  }, [navigate, isAuthenticated]);
 
   // 註冊按鈕
   const handleClick = async () => {
@@ -50,14 +40,14 @@ const SignUpPage = () => {
       return;
     }
 
-    const { success, authToken } = await register({
+    // 回傳值變成只有一個布林值
+    const success = await register({
       username,
       email,
       password,
     });
 
     if (success) {
-      localStorage.setItem('authToken', authToken);
       // 彈出登入成功訊息
       Swal.fire({
         position: 'top',
@@ -66,8 +56,6 @@ const SignUpPage = () => {
         icon: 'success',
         showConfirmButton: false,
       });
-      // 若成功則導至 todos 頁面
-      navigate('/todos');
       return;
     }
     // 彈出登入失敗訊息

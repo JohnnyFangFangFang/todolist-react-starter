@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
   // 驗證 token
   useEffect(() => {
     const checkTokenIsValid = async () => {
+      // 從 localStorage 拿 token
       const authToken = localStorage.getItem('authToken');
       // 如果 token 不存在則進行相關設定
       if (!authToken) {
