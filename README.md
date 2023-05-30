@@ -31,4 +31,4 @@ npm start
 webpack compiled successfully
 ```
 6. Usually, your browser will run automatically and show the project. If it doesn't, please open your browser, type "http://localhost:3000", then enjoy the project. BTW, that would be entertaining if you could enjoy watching this React practice, lol. If you did so, please let me know.
-7. Press "ctrl + c" in Terminal if you want to stop running the project. (PAT test3)
+7. Press "ctrl + c" in Terminal if you want to stop running the project. (PAT test4)
