@@ -6,12 +6,14 @@ import { HomePage, LoginPage, SignUpPage, TodoPage } from 'pages';
 // 引入 context
 import { AuthProvider } from 'contexts/AuthContext';
 
+// 設定網址正確性
+const basename = process.env.PUBLIC_URL;
 
 // 設定路由與對應渲染畫面
 function App() {
   return (
     <div className="app">
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <AuthProvider>
           <Routes>
             <Route path="login" element={<LoginPage />} />

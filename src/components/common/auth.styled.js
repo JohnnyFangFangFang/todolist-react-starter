@@ -7,7 +7,6 @@ const StyedContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 50px;
-  border: 3px solid red;
 `;
 
 const StyledAuthInputContainer = styled.div`
